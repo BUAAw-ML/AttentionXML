@@ -29,7 +29,7 @@ class Model(object):
 
     """
     def __init__(self, network, model_path, gradient_clip_value=5.0, device_ids=None, **kwargs):
-        self.model = nn.DataParallel(network(**kwargs).cuda(), device_ids=device_ids)
+        self.model = nn.DataParallel(network(**kwargs).cuda(1), device_ids=device_ids)
         self.loss_fn = nn.BCEWithLogitsLoss()
         self.model_path, self.state = model_path, {}
         os.makedirs(os.path.split(self.model_path)[0], exist_ok=True)
@@ -64,7 +64,7 @@ class Model(object):
                 self.swa_init()
             for i, (train_x, train_y) in enumerate(train_loader, 1):
                 global_step += 1
-                loss = self.train_step(train_x, train_y.cuda())
+                loss = self.train_step(train_x, train_y.cuda(1))
                 if global_step % step == 0:
                     self.swa_step()
                     self.swap_swa_params()
@@ -162,7 +162,7 @@ class XMLModel(Model):
         self.model.eval()
         with torch.no_grad():
             scores = torch.sigmoid(self.network(data_x, candidates=candidates, attn_weights=self.attn_weights))
-            scores, labels = torch.topk(scores * group_scores.cuda(), k)
+            scores, labels = torch.topk(scores * group_scores.cuda(1), k)
             return scores.cpu(), candidates[np.arange(len(data_x)).reshape(-1, 1), labels.cpu()]
 
     def train(self, *args, **kwargs):

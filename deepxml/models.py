@@ -16,7 +16,7 @@ from tqdm import tqdm
 from logzero import logger
 from typing import Optional, Mapping, Tuple
 
-from deepxml.evaluation import get_p_5, get_n_5
+from deepxml.evaluation import get_p_5, get_n_5, get_p_1, get_n_1
 from deepxml.modules import *
 from deepxml.optimizers import *
 
@@ -70,7 +70,7 @@ class Model(object):
                     self.swap_swa_params()
                     labels = np.concatenate([self.predict_step(valid_x, k)[1] for valid_x in valid_loader])
                     targets = valid_loader.dataset.data_y
-                    p5, n5 = get_p_5(labels, targets), get_n_5(labels, targets)
+                    p5, n5 = get_p_1(labels, targets), get_n_1(labels, targets)
                     if n5 > best_n5:
                         self.save_model()
                         best_n5, e = n5, 0

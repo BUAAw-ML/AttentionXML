@@ -28,7 +28,7 @@ class Model(object):
     """
 
     """
-    def __init__(self, network, model_path, gradient_clip_value=5.0, device_ids=None, **kwargs):
+    def __init__(self, network, model_path, gradient_clip_value=5.0, device_ids=[1], **kwargs):
         self.model = nn.DataParallel(network(**kwargs).cuda(1), device_ids=device_ids)
         self.loss_fn = nn.BCEWithLogitsLoss()
         self.model_path, self.state = model_path, {}
@@ -135,7 +135,7 @@ class XMLModel(Model):
     """
 
     """
-    def __init__(self, labels_num, hidden_size, device_ids=None, attn_device_ids=None,
+    def __init__(self, labels_num, hidden_size, device_ids=[1], attn_device_ids=[1],
                  most_labels_parallel_attn=80000, **kwargs):
         parallel_attn = labels_num <= most_labels_parallel_attn
         super(XMLModel, self).__init__(hidden_size=hidden_size, device_ids=device_ids, labels_num=labels_num,

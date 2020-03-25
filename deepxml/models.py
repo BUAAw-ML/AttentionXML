@@ -56,7 +56,7 @@ class Model(object):
         self.optimizer = DenseSparseAdam(self.model.parameters(), **kwargs)
 
     def train(self, train_loader: DataLoader, valid_loader: DataLoader, opt_params: Optional[Mapping] = None,
-              nb_epoch=100, step=100, k=10, early=50, verbose=True, swa_warmup=None, **kwargs):
+              nb_epoch=100, step=100, k=20, early=50, verbose=True, swa_warmup=None, **kwargs):
         self.get_optimizer(**({} if opt_params is None else opt_params))
         global_step, best_n5, e = 0, 0.0, 0
         for epoch_idx in range(nb_epoch):
